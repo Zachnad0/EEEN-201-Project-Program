@@ -1,4 +1,5 @@
 #pragma once
+#include <Arduino.h>
 #include <stdint.h>
 
 namespace eeen201
@@ -14,6 +15,8 @@ namespace eeen201
 
         ServoBase(uint8_t contPin) : controlPin{contPin}
         {
+            pinMode(contPin, OUTPUT);
+            digitalWrite(contPin, LOW);
         }
     };
 
