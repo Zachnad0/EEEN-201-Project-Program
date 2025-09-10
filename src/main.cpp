@@ -8,8 +8,8 @@ Adafruit_NAU7802 nau;
 void setup()
 {
     // pinMode(LED_BUILTIN, OUTPUT);
-    nau.begin();
     Serial.begin(115200);
+    nau.begin();
     delay(3000);
 
     nau.setGain(NAU7802_GAIN_128);

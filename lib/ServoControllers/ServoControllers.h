@@ -2,32 +2,29 @@
 #include <Arduino.h>
 #include <stdint.h>
 
+#define _mostAngleLen_us 2000
+#define _leastAngleLen_us 1000
+
 namespace eeen201
 {
     class ServoBase
     {
     protected:
-        uint8_t controlPin, pulseLength_us = 0;
+        uint8_t controlPin;
+        uint32_t pulseLength_us = 0;
 
     public:
         ServoBase(ServoBase &) = delete;
         bool operator=(ServoBase &) = delete;
-        virtual inline void Stop() = 0;
-        virtual inline void Start() = 0;
 
         ServoBase(uint8_t contPin) : controlPin{contPin}
         {
-            if (!digitalPinHasPWM(contPin))
-            {
-                // This should not happen
-                return;
-            }
             pinMode(contPin, OUTPUT);
         }
 
         void Update()
         {
-            delayMicroseconds(5000);
+            delay(10);
             digitalWrite(controlPin, HIGH);
             delayMicroseconds(pulseLength_us);
             digitalWrite(controlPin, LOW);
@@ -43,7 +40,12 @@ namespace eeen201
         {
             // Translate angle to pulseLength for HD-3001HB
             angle = constrain(angle, 0, 90);
-            pulseLength_us = (angle / 90 + 1) * 1000;
+            pulseLength_us = (uint32_t)((angle / 90.0f) * (_mostAngleLen_us - _leastAngleLen_us)) + _leastAngleLen_us;
+        }
+
+        AngleServo(uint8_t contPin) : ServoBase(contPin)
+        {
+            pulseLength_us = (_mostAngleLen_us - _leastAngleLen_us) / 2 + _leastAngleLen_us;
         }
     };
 
