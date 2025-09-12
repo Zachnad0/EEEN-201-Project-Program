@@ -15,7 +15,7 @@ namespace eeen201
 
     public:
         ServoBase(ServoBase &) = delete;
-        bool operator=(ServoBase &) = delete;
+        ServoBase& operator=(ServoBase &) = delete;
 
         ServoBase(uint8_t contPin) : controlPin{contPin}
         {
@@ -59,3 +59,6 @@ namespace eeen201
     //     }
     // };
 }
+
+#undef _mostAngleLen_us
+#undef _leastAngleLen_us
