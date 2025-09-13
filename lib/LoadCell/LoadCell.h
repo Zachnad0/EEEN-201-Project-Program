@@ -25,15 +25,11 @@ namespace eeen201
             if (loadCell != nullptr)
                 return;
 
-            loadCell = new Adafruit_NAU7802{};
+            loadCell = new Adafruit_NAU7802();
             loadCell->begin();
             loadCell->setRate(NAU7802_RATE_320SPS);
-            while (!loadCell->setGain(NAU7802_GAIN_32))
-                delay(1);
-            while (!loadCell->calibrate(NAU7802_CALMOD_INTERNAL))
-                delay(1);
-            while (!loadCell->calibrate(NAU7802_CALMOD_OFFSET))
-                delay(1);
+            loadCell->setGain(NAU7802_GAIN_32);
+            Recalibrate();
             while (loadCell->available())
                 loadCell->read();
         }
@@ -43,6 +39,7 @@ namespace eeen201
         static int32_t ReadNextVal()
         {
             EnsureInit();
+
             // Only try 255 times
             for (uint8_t i = 1; !loadCell->available(); i++)
             {
@@ -59,6 +56,8 @@ namespace eeen201
 
         static void Recalibrate()
         {
+            EnsureInit();
+
             while (!loadCell->calibrate(NAU7802_CALMOD_INTERNAL))
                 delay(1);
             while (!loadCell->calibrate(NAU7802_CALMOD_OFFSET))
