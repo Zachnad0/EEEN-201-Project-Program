@@ -6,12 +6,30 @@
 
 eeen201::AngleServo *dropServo, *sortServo;
 
+/// @brief Measures the interval between ball bounces on load cell.
+/// @return Bounce interval in milliseconds, else 0 if failed/timeout.
 uint32_t TestBounceInterval()
 {
-    constexpr uint32_t MAXTIME_ms = 0, DOWNTIME_ms = 0, VAL_THRESHOLD = 0;
-    // Measure time between first two times a constant threshold reading is detected.
+    constexpr int32_t MAXTIME_FIRST_ms = 0, MAXTIME_SECOND_ms = 0, MININTERVAL_ms = 0, VAL_THRESHOLD = 0;
+    // Measure time between first two times a reading exceeding threshold is detected
 
-    // TODO complete method, then test
+    eeen201::LoadCell::Recalibrate();
+    uint32_t lastTime = millis();
+    while (eeen201::LoadCell::ReadNextVal() < VAL_THRESHOLD)
+    {
+        if ((millis() - lastTime) > MAXTIME_FIRST_ms)
+            return 0;
+    }
+    lastTime = millis();
+    delay(MININTERVAL_ms);
+    while (eeen201::LoadCell::ReadNextVal() < VAL_THRESHOLD)
+    {
+        if ((millis() - lastTime) > MAXTIME_SECOND_ms)
+            return 0;
+    }
+
+    uint32_t interval = millis() - lastTime;
+    return interval;
 }
 
 void setup()
@@ -26,5 +44,5 @@ void setup()
 
 void loop()
 {
-    // Set up for testing
+    // TODO test TestBounceInterval function
 }

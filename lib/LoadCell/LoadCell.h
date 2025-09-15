@@ -30,7 +30,7 @@ namespace eeen201
             loadCell->setRate(NAU7802_RATE_320SPS);
             loadCell->setGain(NAU7802_GAIN_32);
             Recalibrate();
-            while (loadCell->available())
+            while (loadCell->available()) // Flush
                 loadCell->read();
         }
 
@@ -43,9 +43,9 @@ namespace eeen201
             // Only try 255 times
             for (uint8_t i = 1; !loadCell->available(); i++)
             {
-                delayMicroseconds(1000000 / 320);
                 if (i == 0)
                     return -999999;
+                delayMicroseconds(1000000 / 320);
             }
 
             int32_t val = loadCell->read();

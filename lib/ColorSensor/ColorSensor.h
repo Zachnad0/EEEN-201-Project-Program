@@ -14,8 +14,8 @@ namespace eeen201
         static TCS3200 *colorSensor;
 
     public:
-        ColorSensor(ColorSensor &) = delete;
-        ColorSensor &operator=(ColorSensor &) = delete;
+        ColorSensor(const ColorSensor &) = delete;
+        ColorSensor &operator=(const ColorSensor &) = delete;
         ColorSensor() = delete;
 
         static void EnsureInit()
@@ -26,7 +26,13 @@ namespace eeen201
             colorSensor = new TCS3200(PIN_COLSEN_S0, PIN_COLSEN_S1, PIN_COLSEN_S2, PIN_COLSEN_S3, PIN_COLSEN_OUT);
             colorSensor->begin();
             colorSensor->frequency_scaling(TCS3200_OFREQ_20P);
-            // TODO figure out sensor calibration.
+            // TODO figure out if sensor calibration is practically necessary (technically optional)
+        }
+
+        static inline RGBColor SampleColor()
+        {
+            EnsureInit();
+            return colorSensor->read_rgb_color();
         }
     };
 
