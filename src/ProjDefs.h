@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-
 // TODO define these
 #define PIN_SERVO_DROP 0
 #define PIN_SERVO_SORT 0
