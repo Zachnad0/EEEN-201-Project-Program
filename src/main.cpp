@@ -6,6 +6,32 @@
 #include <BallType.h>
 
 eeen201::AngleServo *dropServo, *sortServo;
+const eeen201::BallType BALL_DEFS[] =
+    {
+        // Format: {r,g,b}, minMass, maxMass, minBI, maxBI
+        {{1, 1, 1}, 2, 2, 3, 3}, 
+};
+
+constexpr size_t BALL_DEF_LEN = sizeof(BALL_DEFS) / sizeof(eeen201::BallType);
+
+const eeen201::BallType* FindClosestType(RGBColor color, uint32_t mass, uint32_t bounceInterval)
+{
+    // Determines the type with the lowest error as the best match
+    const eeen201::BallType *closestType = nullptr;
+    float closestError = INFINITY;
+    for (size_t i = 0; i < BALL_DEF_LEN; i++)
+    {
+        const eeen201::BallType *currType = BALL_DEFS + i;
+        float currError = currType->ComputeMatchError(color, mass, bounceInterval);
+        if (currError < closestError)
+        {
+            closestError = currError;
+            closestType = currType;
+        }
+    }
+
+    return closestType;
+}
 
 /// @brief Measures the interval between ball bounces on load cell.
 /// @return Bounce interval in milliseconds, else 0 if failed/timeout.
