@@ -26,12 +26,33 @@ namespace eeen201
             colorSensor = new TCS3200(PIN_COLSEN_S0, PIN_COLSEN_S1, PIN_COLSEN_S2, PIN_COLSEN_S3, PIN_COLSEN_OUT);
             colorSensor->begin();
             colorSensor->frequency_scaling(TCS3200_OFREQ_20P);
+            colorSensor->integration_time(100);
             // TODO figure out if sensor calibration is practically necessary (technically optional)
+
+            // // Calibrate the sensor for accurate color readings
+            // Serial.println("Calibrating...");
+            // // Calibrate the sensor for light surface (white calibration)
+            // Serial.println("Please face the sensor to white surface.");
+            // delay(2000);
+            // colorSensor->calibrate_light();
+
+            // // Calibrate the sensor for dark surface (black calibration)
+            // Serial.println("Please face the sensor to dark surface.");
+            // delay(2000);
+            // colorSensor->calibrate_dark();
+
+            // // Complete calibration and enable calibrated readings
+            // Serial.println("Done calibrating!");
+            // colorSensor->calibrate();
+
+            // Add a delay to allow time for the serial output to be read
+            delay(1000);
         }
 
         static inline RGBColor SampleColor()
         {
             EnsureInit();
+            // colorSensor->loop();
             return colorSensor->read_rgb_color();
         }
     };

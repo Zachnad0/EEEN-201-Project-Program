@@ -28,7 +28,7 @@ namespace eeen201
             loadCell = new Adafruit_NAU7802();
             loadCell->begin();
             loadCell->setRate(NAU7802_RATE_320SPS);
-            loadCell->setGain(NAU7802_GAIN_32);
+            loadCell->setGain(NAU7802_GAIN_8);
             Recalibrate();
             while (loadCell->available()) // Flush
                 loadCell->read();
@@ -62,6 +62,9 @@ namespace eeen201
                 delay(1);
             while (!loadCell->calibrate(NAU7802_CALMOD_OFFSET))
                 delay(1);
+
+            while (loadCell->available()) // Flush
+                loadCell->read();
         }
     };
 
