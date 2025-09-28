@@ -30,8 +30,6 @@ namespace eeen201
             loadCell->setRate(NAU7802_RATE_320SPS);
             loadCell->setGain(NAU7802_GAIN_8);
             Recalibrate();
-            while (loadCell->available()) // Flush
-                loadCell->read();
         }
 
         /// @brief Waits for next reading to be taken.
