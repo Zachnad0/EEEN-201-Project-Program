@@ -10,10 +10,6 @@ namespace eeen201
     {
     private:
         static Adafruit_NAU7802 *loadCell;
-        // static int32_t ValToGrams(int32_t val)
-        // {
-        //     // Hmm, may not be necessary at all.
-        // }
 
     public:
         LoadCell(LoadCell &) = delete;
@@ -49,8 +45,6 @@ namespace eeen201
             int32_t val = loadCell->read();
             return val;
         }
-
-        // static inline int32_t ReadNextGrams() { return ValToGrams(ReadNextVal()); }
 
         static void Recalibrate()
         {

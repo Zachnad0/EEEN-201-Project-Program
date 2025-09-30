@@ -23,9 +23,10 @@ namespace eeen201
     public:
         const RGBColor color;
         const uint32_t massMean, massVariance, stressMean, stressVariance;
+        const bool isValid;
 
-        BallType(RGBColor color, uint32_t massMean, uint32_t massVariance, uint32_t stressMean, uint32_t stressVariance)
-            : color(color), massMean(massMean), massVariance(massVariance), stressMean(stressMean), stressVariance(stressVariance)
+        BallType(RGBColor color, uint32_t massMean, uint32_t massVariance, uint32_t stressMean, uint32_t stressVariance, bool isValid = true)
+            : color(color), massMean(massMean), massVariance(massVariance), stressMean(stressMean), stressVariance(stressVariance), isValid(isValid)
         {
         }
 
