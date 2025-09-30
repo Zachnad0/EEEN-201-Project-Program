@@ -293,5 +293,5 @@
     "vector": "cpp",
     "algorithm": "cpp",
     "type_traits": "cpp"
-}
+  }
 }

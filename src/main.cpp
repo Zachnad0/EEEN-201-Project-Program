@@ -108,23 +108,23 @@ void setup()
 {
     Serial.begin(115200);
     // Init classes
-    eeen201::LoadCell::EnsureInit();
-    // eeen201::ColorSensor::EnsureInit();
-    strainServo = new eeen201::AngleServo(PIN_SERVO_STRAIN);
+    // eeen201::LoadCell::EnsureInit();
+    eeen201::ColorSensor::EnsureInit();
+    // strainServo = new eeen201::AngleServo(PIN_SERVO_STRAIN);
     // sortServo = new eeen201::AngleServo(PIN_SERVO_SORT);
     delay(250);
 
-    // TODO test StressTest
-    for (uint8_t i = 3; i != 0; i--)
-    {
-        Serial.print("Testing in ");
-        Serial.print((int)i);
-        Serial.println("...");
-        delay(1000);
-    }
-    int32_t reading = StressTest();
-    Serial.print("Reading: ");
-    Serial.println(reading);
+    // // TODO test StressTest
+    // for (uint8_t i = 3; i != 0; i--)
+    // {
+    //     Serial.print("Testing in ");
+    //     Serial.print((int)i);
+    //     Serial.println("...");
+    //     delay(1000);
+    // }
+    // int32_t reading = StressTest();
+    // Serial.print("Reading: ");
+    // Serial.println(reading);
 }
 
 constexpr uint8_t SAMPLE_LEN = 10;
@@ -132,13 +132,15 @@ int32_t samples[SAMPLE_LEN];
 
 void loop()
 {
-    // RGBColor currColor = eeen201::ColorSensor::SampleColor();
-    // Serial.println((int)currColor.red);
-    // Serial.println((int)currColor.green);
-    // Serial.println((int)currColor.blue);
+    RGBColor currColor = eeen201::ColorSensor::SampleColor();
+    Serial.print("#");
+    Serial.print(currColor.red, HEX);
+    Serial.print(currColor.green, HEX);
+    Serial.println(currColor.blue, HEX);
     // Serial.println("==========================================================");
+    delay(1000);
 
-    // // TODO Acquire mean variance of stress for each ball
+    // // TODO Acquire readings of stress for each ball
     // for (uint8_t k = 0; k < SAMPLE_LEN; k++)
     // {
     //     delay(5000);
@@ -149,7 +151,7 @@ void loop()
     //         Serial.println("...");
     //         delay(1000);
     //     }
-    //     int32_t reading = StressTest();
+    // int32_t reading = StressTest();
     //     samples[k] = reading;
     //     Serial.print("Reading: ");
     //     Serial.println(reading);
