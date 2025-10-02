@@ -2,13 +2,7 @@
 
 #include <TCS3200.h>
 #include <stdint.h>
-#include <type_traits>
 #define pow2(x) (x) * (x)
-
-// VALID BALL PROPERTIES:
-// TT: yellow or white | low mass  | unknown stress
-// GP: white,          | low mass  | unknown stress
-// SQ: black,          | high mass | unknown stress
 
 namespace eeen201
 {
@@ -21,12 +15,13 @@ namespace eeen201
     class BallType
     {
     public:
+        const char *name;
         const RGBColor color;
         const uint32_t massMean, massVariance, stressMean, stressVariance;
         const bool isValid;
 
-        BallType(RGBColor color, uint32_t massMean, uint32_t massVariance, uint32_t stressMean, uint32_t stressVariance, bool isValid = true)
-            : color(color), massMean(massMean), massVariance(massVariance), stressMean(stressMean), stressVariance(stressVariance), isValid(isValid)
+        BallType(const char *name, RGBColor color, uint32_t massMean, uint32_t massVariance, uint32_t stressMean, uint32_t stressVariance, bool isValid = true)
+            : name(name), color(color), massMean(massMean), massVariance(massVariance), stressMean(stressMean), stressVariance(stressVariance), isValid(isValid)
         {
         }
 
@@ -42,11 +37,18 @@ namespace eeen201
             int16_t rDiff = mColor.red - (int16_t)color.red;
             int16_t gDiff = mColor.green - (int16_t)color.green;
             int16_t bDiff = mColor.blue - (int16_t)color.blue;
-            error += COLOR_WEIGHT * (pow2(rDiff) + pow2(gDiff) + pow2(bDiff)) / 3.0f;
+            float colorError = COLOR_WEIGHT * (pow2(rDiff) + pow2(gDiff) + pow2(bDiff)) / 3.0f;
+            // Serial.print("Color Error: ");
+            // Serial.println(colorError);
+            error += colorError;
 
             // Mass and stress be using normal distribution now!
             float massScore = NormalPDF(mMass, massMean, massVariance); // Higher is closer
+            // Serial.print("Mass Score: ");
+            // Serial.println(massScore);
             float stressScore = NormalPDF(mStress, stressMean, stressVariance);
+            // Serial.print("Stress Score: ");
+            // Serial.println(stressScore);
             error += MASS_WEIGHT * (1 - massScore) + STRESS_WEIGHT * (1 - stressScore);
 
             return error;

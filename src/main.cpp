@@ -10,15 +10,39 @@
 #include <BallType.h>
 
 eeen201::AngleServo *strainServo, *sortServo;
+std::vector<const eeen201::BallType *> processedBallTypes;
+
+// VALID BALL PROPERTIES:
+// TT: yellow or white | low mass  | unknown stress
+// GP: yellow,         | low mass  | unknown stress
+// SQ: black,          | high mass | unknown stress
+// INVALID BALLS:
+// TT: black
+// GP: black, white
+// SQ: white, yellow
 const eeen201::BallType BALL_DEFS[] =
     {
         // Format: {r,g,b}, massMean, massVariance, stressMean, stressVariance, isValid (default true)
-        {{1, 1, 1}, 2, 2, 3, 3},
+        // Valids:
+        {"TT - W", {1, 1, 1}, 2, 2, 3, 3},
+        {"TT - Y", {1, 1, 1}, 2, 2, 3, 3}, // Should have same physical properties as prev.
+        {"GP - Y", {1, 1, 1}, 2, 2, 3, 3},
+        {"SQ - Y", {1, 1, 1}, 2, 2, 3, 3},  // Least bouncy SQ
+        {"SQ - YY", {1, 1, 1}, 2, 2, 3, 3}, // All SQs should have same color
+        {"SQ - R", {1, 1, 1}, 2, 2, 3, 3},
+        {"SQ - B", {1, 1, 1}, 2, 2, 3, 3}, // Most bouncy SQ
+
+        // Invalids: (Alternatively just check if error is above some threshold?)
+        {"TT - B", {1, 1, 1}, 2, 2, 3, 3},
+        {"GP - B", {1, 1, 1}, 2, 2, 3, 3},
+        {"GP - W", {1, 1, 1}, 2, 2, 3, 3},
+        {"SQ - Y", {1, 1, 1}, 2, 2, 3, 3},
+        {"SQ - W", {1, 1, 1}, 2, 2, 3, 3}, // Maybe same phys. props. as prev? (crusty paint?)
 };
 
 constexpr size_t BALL_DEF_LEN = sizeof(BALL_DEFS) / sizeof(eeen201::BallType);
 
-const eeen201::BallType *FindClosestType(RGBColor color, uint32_t mass, uint32_t stress) // TODO test method
+const eeen201::BallType *FindClosestType(RGBColor color, int32_t mass, int32_t stress, float &minError) // TODO test method
 {
     // Determines the type with the lowest error as the best match
     const eeen201::BallType *closestType = nullptr;
@@ -34,6 +58,7 @@ const eeen201::BallType *FindClosestType(RGBColor color, uint32_t mass, uint32_t
         }
     }
 
+    minError = closestError;
     return closestType;
 }
 
@@ -141,13 +166,15 @@ void DoSortBall(const eeen201::BallType *ballType) // TODO test method
     MoveServoToAngleForTime(sortServo, ANGLE_DEFAULT, DELAY_MOVE_IN_ms);
 }
 
-/// @brief Re-orients servos back to their specified default angles, for a predetermined time.
+/// @brief Re-orients servos back to their specified default angles, over a predetermined time.
 void ResetServoPositions() // TODO test method
 {
     constexpr uint32_t DELAY_ORIENTATION = 3000;
     constexpr float ANGLE_DEFAULT_STRAIN = 90, ANGLE_DEFAULT_SORT = 45;
 
     uint32_t moveStart_ms = millis();
+    sortServo->SetAngle(ANGLE_DEFAULT_SORT);
+    strainServo->SetAngle(ANGLE_DEFAULT_STRAIN);
     while (millis() - moveStart_ms < DELAY_ORIENTATION)
     {
         sortServo->Update();
@@ -155,15 +182,42 @@ void ResetServoPositions() // TODO test method
     }
 }
 
+/// @brief Literally the full sequence to be run repeatedly in the main loop
+void FullBallTestSequence()
+{
+    Serial.println("FEED BALL NOW");
+
+    int32_t mMass = MassTest();
+    Serial.print("Mass: ");
+    Serial.println(mMass);
+
+    RGBColor mColor = ColorTest();
+    String cSt = String{"Color: ("} + (int)mColor.red + ", " + (int)mColor.green + ", " + (int)mColor.blue + ")";
+    Serial.println(cSt);
+
+    int32_t mStress = StressTest();
+    Serial.print("Stress: ");
+    Serial.println(mStress);
+
+    float minError;
+    const eeen201::BallType *closestType = FindClosestType(mColor, mMass, mStress, minError);
+    Serial.print("Closest type: ");
+    Serial.println(closestType->name);
+    Serial.print("Error: ");
+    Serial.println(minError);
+    processedBallTypes.push_back(closestType);
+}
+
 void setup()
 {
     Serial.begin(115200);
     // Init classes
-    // eeen201::LoadCell::EnsureInit();
-    // eeen201::ColorSensor::EnsureInit();
-    // strainServo = new eeen201::AngleServo(PIN_SERVO_STRAIN);
-    // sortServo = new eeen201::AngleServo(PIN_SERVO_SORT);
+    eeen201::LoadCell::EnsureInit();
+    eeen201::ColorSensor::EnsureInit();
+    strainServo = new eeen201::AngleServo(PIN_SERVO_STRAIN);
+    sortServo = new eeen201::AngleServo(PIN_SERVO_SORT);
     delay(250);
+    ResetServoPositions();
 
     // // TODO test StressTest
     // for (uint8_t i = 3; i != 0; i--)
@@ -215,4 +269,9 @@ void loop()
     //     if (i != SAMPLE_LEN - 1)
     //         Serial.print(";");
     // }
+
+    // // Final sequence
+    // FullBallTestSequence();
+    // Serial.println("\n");
+    // delay(1000);
 }
