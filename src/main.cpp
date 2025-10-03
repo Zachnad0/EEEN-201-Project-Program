@@ -140,7 +140,7 @@ RGBColor ColorTest() // TODO test method
         sumRed += currColor.red;
         sumGreen += currColor.green;
         sumBlue += currColor.blue;
-        delay(10);
+        delay(100);
     }
 
     uint8_t avgRed = (uint8_t)(sumRed / SAMPLE_N);
@@ -237,6 +237,10 @@ int32_t samples[SAMPLE_LEN];
 
 void loop()
 {
+bool go = false;
+    while (!go)
+        go = Serial.available() && Serial.readString().equals("f");
+
     // RGBColor currColor = eeen201::ColorSensor::SampleColor();
     // Serial.print("#");
     // Serial.print(currColor.red, HEX);
