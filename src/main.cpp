@@ -237,12 +237,12 @@ int32_t samples[SAMPLE_LEN];
 
 void loop()
 {
-    // RGBColor currColor = eeen201::ColorSensor::SampleColor();
-    // Serial.print("#");
-    // Serial.print(currColor.red, HEX);
-    // Serial.print(currColor.green, HEX);
-    // Serial.println(currColor.blue, HEX);
-    // // Serial.println("==========================================================");
+    // RGBColor currColor = ColorTest();
+    // Serial.print(currColor.red, 10);
+    // Serial.print(", ");
+    // Serial.print(currColor.green, 10);
+    // Serial.print(", ");
+    // Serial.println(currColor.blue, 10);
     // delay(1000);
 
     // // TODO Acquire readings of stress for each ball

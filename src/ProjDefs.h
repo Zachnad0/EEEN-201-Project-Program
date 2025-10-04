@@ -1,8 +1,8 @@
 #pragma once
 
 // TODO define these
-#define PIN_SERVO_STRAIN 0
-#define PIN_SERVO_SORT 0
+#define PIN_SERVO_STRAIN 7
+#define PIN_SERVO_SORT 6
 
 #define PIN_COLSEN_S0 12
 #define PIN_COLSEN_S1 11
