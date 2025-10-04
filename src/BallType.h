@@ -34,9 +34,9 @@ namespace eeen201
 
             // Color
             // TODO test and tweak color error
-            int16_t rDiff = mColor.red - (int16_t)color.red;
-            int16_t gDiff = mColor.green - (int16_t)color.green;
-            int16_t bDiff = mColor.blue - (int16_t)color.blue;
+            int32_t rDiff = mColor.red - (int32_t)color.red;
+            int32_t gDiff = mColor.green - (int32_t)color.green;
+            int32_t bDiff = mColor.blue - (int32_t)color.blue;
             float colorError = COLOR_WEIGHT * (pow2(rDiff) + pow2(gDiff) + pow2(bDiff)) / 3.0f;
             // Serial.print("Color Error: ");
             // Serial.println(colorError);
